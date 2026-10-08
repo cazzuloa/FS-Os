@@ -1,0 +1,42 @@
+name: Build OS image
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nasm gcc-multilib build-essential qemu-system-x86
+
+      - name: Build image with compile.sh
+        run: |
+          chmod +x scripts/compile.sh
+          ./scripts/compile.sh
+
+      - name: Verify artifacts
+        run: |
+          ls -lh bin/
+          test -f bin/os.img
+          test -f bin/boot.bin
+
+      - name: Upload os.img
+        uses: actions/upload-artifact@v4
+        with:
+          name: os-img
+          path: |
+            bin/os.img
+            bin/boot.bin
+            bin/kernel.bin
+          if-no-files-found: error
