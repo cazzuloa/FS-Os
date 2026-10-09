@@ -22,8 +22,8 @@ jobs:
 
       - name: Build image with compile.sh
         run: |
-          chmod +x scripts/compile.sh
-          ./scripts/compile.sh
+          chmod +x scripts/compile_workflow.sh
+          ./scripts/compile_workflow.sh
 
       - name: Verify artifacts
         run: |
